@@ -1,0 +1,24 @@
+Config file
+// Upon startup node-dev looks for a .node-dev.json file in the following directories:
+
+// the user's home directory
+// the current working directory
+// the same directory as the script to run
+// Settings found later in the list will overwrite previous options.
+
+// Configuration options
+// Usually node-dev doesn't require any configuration at all, but there are some options you can set to tweak its behaviour:
+
+// clear – Whether to clear the screen upon restarts. Default: false
+// dedupe – Whether modules should by dynamically deduped. Default: false
+// deps – How many levels of dependencies should be watched. Default: 1
+// fork – Whether to hook into child_process.fork (required for clustered programs). Default: true
+// graceful_ipc - Send the argument provided as an IPC message instead of SIGTERM during restart events. Default: "" (off)
+// ignore - A single file or an array of files to ignore. Default: []
+// notify – Whether to display desktop notifications. Default: true
+// poll - Force polling for file changes, this can be CPU-heavy. Default: false
+// respawn - Keep watching for changes after the script has exited. Default: false
+// timestamp – The timestamp format to use for logging restarts. Default: "HH:MM:ss"
+// vm – Whether to watch files loaded via Node's VM module. Default: true
+// ESModules
+// When using ESModule syntax and .mjs files, node-dev will automatically use a loader to know which files to watch.

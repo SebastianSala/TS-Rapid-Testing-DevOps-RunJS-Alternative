@@ -1,0 +1,6 @@
+{
+    "ts": "ts-node/register",
+    "clear": true,
+    "respawn": true,
+    "notify": false
+}

@@ -1,0 +1,94 @@
+SWC
+SWC support is built-in via the --swc flag or "swc": true tsconfig option.
+
+SWC is a TypeScript-compatible transpiler implemented in Rust. This makes it an order of magnitude faster than vanilla transpileOnly.
+
+To use it, first install @swc/core or @swc/wasm. If using importHelpers, also install @swc/helpers. If target is less than "es2015" and using async/await or generator functions, also install regenerator-runtime.
+
+npm i -D @swc/core @swc/helpers regenerator-runtime
+Then add the following to your tsconfig.json.
+
+{
+  "ts-node": {
+    "swc": true
+  }
+}
+SWC uses @swc/helpers instead of tslib. If you have enabled importHelpers, you must also install @swc/helpers.
+
+CommonJS vs native ECMAScript modules
+TypeScript is almost always written using modern import syntax, but it is also transformed before being executed by the underlying runtime. You can choose to either transform to CommonJS or to preserve the native import syntax, using node's native ESM support. Configuration is different for each.
+
+Here is a brief comparison of the two.
+
+CommonJS	Native ECMAScript modules
+Write native import syntax	Write native import syntax
+Transforms import into require()	Does not transform import
+Node executes scripts using the classic CommonJS loader	Node executes scripts using the new ESM loader
+Use any of:
+ts-node
+node -r ts-node/register
+NODE_OPTIONS="ts-node/register" node
+require('ts-node').register({/* options */})	Use any of:
+ts-node --esm
+ts-node-esm
+Set "esm": true in tsconfig.json
+node --loader ts-node/esm
+NODE_OPTIONS="--loader ts-node/esm" node
+CommonJS
+Transforming to CommonJS is typically simpler and more widely supported because it is older. You must remove "type": "module" from package.json and set "module": "CommonJS" in tsconfig.json.
+
+{
+  // This can be omitted; commonjs is the default
+  "type": "commonjs"
+}
+{
+  "compilerOptions": {
+    "module": "CommonJS"
+  }
+}
+If you must keep "module": "ESNext" for tsc, webpack, or another build tool, you can set an override for ts-node.
+
+{
+  "compilerOptions": {
+    "module": "ESNext"
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
+}
+Native ECMAScript modules
+Node's ESM loader hooks are experimental and subject to change. ts-node's ESM support is as stable as possible, but it relies on APIs which node can and will break in new versions of node. Thus it is not recommended for production.
+
+For complete usage, limitations, and to provide feedback, see #1007.
+
+You must set "type": "module" in package.json and "module": "ESNext" in tsconfig.json.
+
+{
+  "type": "module"
+}
+{
+  "compilerOptions": {
+    "module": "ESNext" // or ES2015, ES2020
+  },
+  "ts-node": {
+    // Tell ts-node CLI to install the --loader automatically, explained below
+    "esm": true
+  }
+}
+You must also ensure node is passed --loader. The ts-node CLI will do this automatically with our esm option.
+
+Note: --esm must spawn a child process to pass it --loader. This may change if node adds the ability to install loader hooks into the current process.
+
+# pass the flag
+ts-node --esm
+# Use the convenience binary
+ts-node-esm
+# or add `"esm": true` to your tsconfig.json to make it automatic
+ts-node
+If you are not using our CLI, pass the loader flag to node.
+
+node --loader ts-node/esm ./index.ts
+# Or via environment variable
+NODE_OPTIONS="--loader ts-node/esm" node ./index.ts
